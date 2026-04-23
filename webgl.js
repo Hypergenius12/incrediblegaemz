@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             
                             float dist = distance(uv, uMouse);
                             
-                            float ripple = sin(dist * 40.0 - time * 15.0) * 0.005 * uHoverState * uVelocity;
+                            float ripple = sin(dist * 40.0 - time * 15.0) * 0.015 * uHoverState * uVelocity;
                             ripple *= smoothstep(0.4, 0.0, dist);
                             
                             uv.x += ripple;
@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         float dist = distance(uv, uMouse);
                         
-                        float ripple = sin(dist * 30.0 - time * 10.0) * 0.01 * uHoverState * uVelocity;
+                        float ripple = sin(dist * 30.0 - time * 10.0) * 0.025 * uHoverState * uVelocity;
                         ripple *= smoothstep(0.5, 0.0, dist);
                         
                         uv.x += ripple;
@@ -424,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
                 bgScene.add(spark);
                 particles.push(spark);
-            }, 30);
+            }, 30); 
         });
         
         contactBtn.addEventListener('mouseleave', () => {
@@ -432,11 +432,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         contactBtn.addEventListener('click', (e) => {
-            e.preventDefault(); 
-            
-            navigator.clipboard.writeText('incrediblegaemz@gmail.com');
-            window.location.href = 'mailto:incrediblegaemz@gmail.com';
-            
             playSatisfyingClick();
             
             for (let i = 0; i < 300; i++) {
