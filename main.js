@@ -164,4 +164,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    const contactBtn = document.getElementById('contact-email-btn');
+    const copyToast = document.getElementById('copy-toast');
+
+    if (contactBtn && copyToast) {
+        contactBtn.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            
+            navigator.clipboard.writeText('incrediblegaemz@gmail.com').then(() => {
+                copyToast.classList.add('show');
+                
+                setTimeout(() => {
+                    copyToast.classList.remove('show');
+                }, 2500);
+            }).catch(err => {
+                console.error(err);
+            });
+        });
+    }
 });
