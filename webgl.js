@@ -161,6 +161,15 @@ document.addEventListener('DOMContentLoaded', () => {
             logoMouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1; 
         });
 
+        const logoResizeObserver = new ResizeObserver(() => {
+            if (logoCamera && logoRenderer && logoContainer.clientWidth > 0) {
+                logoCamera.aspect = logoContainer.clientWidth / logoContainer.clientHeight;
+                logoCamera.updateProjectionMatrix();
+                logoRenderer.setSize(logoContainer.clientWidth, logoContainer.clientHeight);
+            }
+        });
+        logoResizeObserver.observe(logoContainer);
+
         const textureLoader = new THREE.TextureLoader();
         textureLoader.load(
             'LOGO.png',
@@ -313,6 +322,15 @@ document.addEventListener('DOMContentLoaded', () => {
             localMouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
         });
 
+        const gameResizeObserver = new ResizeObserver(() => {
+            if (camera && renderer && container.clientWidth > 0) {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            }
+        });
+        gameResizeObserver.observe(container);
+
         const textureLoader = new THREE.TextureLoader();
         textureLoader.load(imageSrc, (texture) => {
             const imgAspect = texture.image.width / texture.image.height;
@@ -384,6 +402,70 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initGameLogo('rack-logo-container', 'logo eack-jukebox-bg-removed.png', true, 16);
     initGameLogo('stick-logo-container', 'STICKWARS (1).png', false, 13);
+
+    const contactBtn = document.getElementById('contact-email-btn');
+    if (contactBtn) {
+        let hoverInterval;
+        
+        contactBtn.addEventListener('mouseenter', () => {
+            hoverInterval = setInterval(() => {
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const material = new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 1.0 });
+                const spark = new THREE.Mesh(geometry, material);
+                
+                spark.position.set((Math.random() - 0.5) * 60, -35, 10);
+                
+                spark.userData = {
+                    velocity: new THREE.Vector3((Math.random() - 0.5) * 1, Math.random() * 2 + 1.5, (Math.random() - 0.5) * 2),
+                    rotSpeedX: (Math.random() - 0.5) * 0.4,
+                    rotSpeedY: (Math.random() - 0.5) * 0.4,
+                    driftSpeedY: 0, driftSpeedX: 0,
+                    isBurstParticle: true, life: 1.2 
+                };
+                bgScene.add(spark);
+                particles.push(spark);
+            }, 30);
+        });
+        
+        contactBtn.addEventListener('mouseleave', () => {
+            clearInterval(hoverInterval);
+        });
+
+        contactBtn.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            
+            navigator.clipboard.writeText('incrediblegaemz@gmail.com');
+            window.location.href = 'mailto:incrediblegaemz@gmail.com';
+            
+            playSatisfyingClick();
+            
+            for (let i = 0; i < 300; i++) {
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const material = new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 1.0 });
+                const burstMesh = new THREE.Mesh(geometry, material);
+                
+                burstMesh.position.set(0, -30, 15);
+                
+                const angle = Math.random() * Math.PI * 2; 
+                const speed = (Math.random() * 5) + 3.0; 
+
+                burstMesh.userData = {
+                    velocity: new THREE.Vector3(
+                        Math.cos(angle) * speed, 
+                        Math.sin(angle) * speed, 
+                        (Math.random() - 0.5) * 4 
+                    ),
+                    rotSpeedX: (Math.random() - 0.5) * 0.8,
+                    rotSpeedY: (Math.random() - 0.5) * 0.8,
+                    driftSpeedY: 0, driftSpeedX: 0,
+                    isBurstParticle: true, life: 1.5 
+                };
+
+                bgScene.add(burstMesh);
+                particles.push(burstMesh);
+            }
+        });
+    }
 
     let mouseX = 0;
     let mouseY = 0;
@@ -592,17 +674,5 @@ document.addEventListener('DOMContentLoaded', () => {
         if (composer) {
             composer.setSize(window.innerWidth, window.innerHeight);
         }
-
-        if (logoContainer && logoCamera && logoRenderer) {
-            logoCamera.aspect = logoContainer.clientWidth / logoContainer.clientHeight;
-            logoCamera.updateProjectionMatrix();
-            logoRenderer.setSize(logoContainer.clientWidth, logoContainer.clientHeight);
-        }
-
-        gameLogoScenes.forEach(obj => {
-            obj.camera.aspect = obj.container.clientWidth / obj.container.clientHeight;
-            obj.camera.updateProjectionMatrix();
-            obj.renderer.setSize(obj.container.clientWidth, obj.container.clientHeight);
-        });
     });
 });
